@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">NextBusPLS</string>
     <string name="title_activity_maps">NextBus Map</string>
-    <string name="textViewUrl">URL:</string>
-    <string name="buttonSendToServer">Send to server</string>
+    <string name="textViewUrl">URL: </string>
+    <string name="buttonSendToServer">Get bus position</string>
     <string name="buttonStartTracking">Start tracking</string>
 
     <string name="latitude_label">Latitude</string>

@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,12 +21,11 @@ import org.json.JSONObject;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private static final String GET_URL = "http://evening-shore-3074.herokuapp.com/rest/coordinate/getRandom";
-    private static final String POST_URL = "http://evening-shore-3074.herokuapp.com/rest/coordinate/";
+    private String getUrl;
     private GoogleMap mMap;
-    private Button buttonSend;
+    private Button buttonGetBusLocation;
     private Button buttonStartTracking;
-    private EditText editTextUrl;
+    private TextView textViewUrl;
     private Marker bus;
 
 
@@ -39,29 +38,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        buttonSend = (Button) findViewById(R.id.button_send);
-        buttonSend.setEnabled(false);
+        getUrl = getResources().getString(R.string.bus_url);
+
+        buttonGetBusLocation = (Button) findViewById(R.id.button_send);
+        buttonGetBusLocation.setEnabled(false);
 
         buttonStartTracking = (Button) findViewById(R.id.button_startTracking);
 
-        editTextUrl = (EditText) findViewById(R.id.editText_url);
-        editTextUrl.setHint(GET_URL);
+        textViewUrl = (TextView) findViewById(R.id.textView_url2);
+        textViewUrl.setText(getUrl);
 
-        buttonSend.setOnClickListener(new View.OnClickListener() {
+        buttonGetBusLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonSend.setEnabled(false);
+                buttonGetBusLocation.setEnabled(false);
                 new RESTClient(new RESTClient.AsyncResponse() {
                     @Override
                     public void processFinish(JSONObject location) {
                         try {
+                            location = (JSONObject) location.get("geolocation");
                             MarkerAnimation.animateMarker(bus, new LatLng((Double) location.get("latitude"), (Double) location.get("longitude")), new LatLngInterpolator.Spherical());
-                            buttonSend.setEnabled(true);
+                            buttonGetBusLocation.setEnabled(true);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                }).execute(GET_URL);
+                }).execute(RequestMethod.GET, getUrl + "1");
             }
         });
 
@@ -77,10 +79,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        buttonSend.setEnabled(true);
+        buttonGetBusLocation.setEnabled(true);
         LatLng polytech = new LatLng(43.5977442, 7.098906);
         bus = mMap.addMarker(new MarkerOptions().position(polytech)
-                .title("Le bus magique")
+                .title("Le bus magique :)")
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.logo_bus))
                 .alpha(0.7f));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polytech, 14.0f));
