@@ -374,7 +374,7 @@ public class LocationActivity extends AppCompatActivity implements
             public void processFinish(JSONObject location) {
 
             }
-        }).execute(RequestMethod.PUT, getUserUrl, userLocation);
+        }).execute(RequestMethod.POST, getUserUrl, userLocation);
 
         updateUI();
         Toast.makeText(this, getResources().getString(R.string.location_updated_message), Toast.LENGTH_SHORT).show();

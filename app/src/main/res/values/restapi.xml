@@ -1,5 +1,5 @@
 <resources>
-    <string name="bus_url">http://evening-shore-3074.herokuapp.com/rest/bus/</string>
-    <string name="user_url">http://evening-shore-3074.herokuapp.com/rest/user/</string>
-    <string name="busStops_url">http://evening-shore-3074.herokuapp.com/rest/</string>
+    <string name="bus_url">http://evening-shore-3074.herokuapp.com/rest/bus/1</string>
+    <string name="user_url">http://evening-shore-3074.herokuapp.com/rest/user/1</string>
+    <string name="busStops_url">http://evening-shore-3074.herokuapp.com/rest/busline/1/stop</string>
 </resources>

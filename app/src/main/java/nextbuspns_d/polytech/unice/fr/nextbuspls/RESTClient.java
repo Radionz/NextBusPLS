@@ -48,7 +48,7 @@ public class RESTClient extends AsyncTask<String, Void, JSONObject> {
             //urlConnection.setReadTimeout(DATARETRIEVAL_TIMEOUT);
 
 
-            if (Log.isLoggable(LOGGER_TAG, Log.INFO)) {
+            if (Log.isLoggable(LOGGER_TAG, Log.INFO) && !json.isEmpty()) {
                 Log.i(LOGGER_TAG, requestMethod + " json: " + json);
             }
 
@@ -59,7 +59,7 @@ public class RESTClient extends AsyncTask<String, Void, JSONObject> {
                 if (!requestMethod.equals(RequestMethod.GET.toString())) {
                     urlConnection.setDoOutput(true);
                     urlConnection.setFixedLengthStreamingMode(json.getBytes().length);
-                    urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
                     //send the request out
                     PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
                     out.print(json);
@@ -128,9 +128,14 @@ public class RESTClient extends AsyncTask<String, Void, JSONObject> {
     @Override
     protected JSONObject doInBackground(String... params) {
         JSONObject jsonObjectReturn = null;
-        Log.d(LOGGER_TAG, "doInBackground: " + params);
         try {
-            jsonObjectReturn = new JSONObject(requestUrl(params[0], params[1], params[2]));
+            String response = requestUrl(params[0], params[1], params[2]);
+            if (response != null) {
+                if (Log.isLoggable(LOGGER_TAG, Log.INFO) && !response.isEmpty()) {
+                    Log.i(LOGGER_TAG, "response: " + response);
+                }
+                jsonObjectReturn = new JSONObject(response);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

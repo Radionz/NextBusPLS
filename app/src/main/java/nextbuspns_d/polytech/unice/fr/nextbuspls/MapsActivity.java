@@ -70,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             e.printStackTrace();
                         }
                     }
-                }).execute(RequestMethod.GET, getBusUrl + "1");
+                }).execute(RequestMethod.GET, getBusUrl);
             }
         });
 
@@ -79,6 +79,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, LocationActivity.class);
                 startActivity(intent);
+
+                new RESTClient(new RESTClient.AsyncResponse() {
+                    @Override
+                    public void processFinish(JSONObject location) {
+
+                    }
+                }).execute(RequestMethod.GET, getBusUrl);
             }
         });
 
@@ -92,7 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         buttonGetBusStops.setEnabled(true);
                     }
-                }).execute(RequestMethod.GET,getBusStopsUrl);
+                }).execute(RequestMethod.GET, getBusStopsUrl);
             }
         });
 
@@ -115,7 +122,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.getUiSettings().setMapToolbarEnabled(false);
         buttonGetBusLocation.setEnabled(true);
-        LatLng polytech = new LatLng(43.5977442, 7.098906);
+        LatLng polytech = new LatLng(43.617014, 7.074173);
         bus = mMap.addMarker(new MarkerOptions().position(polytech)
                 .title("Le bus magique :)")
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.logo_bus))
