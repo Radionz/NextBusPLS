@@ -81,7 +81,9 @@ public class LocationActivity extends AppCompatActivity implements
      * Time when the location was updated represented as a String.
      */
     protected String mLastUpdateTime;
-    private String getUserUrl;
+    private String putUserUrl;
+    private String postLinkUrl;
+    private String postRemoveUrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,7 +105,9 @@ public class LocationActivity extends AppCompatActivity implements
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
 
-        getUserUrl = getResources().getString(R.string.user_url);
+        putUserUrl = getResources().getString(R.string.putUser_url);
+        postLinkUrl = getResources().getString(R.string.link_url);
+        postRemoveUrl = getResources().getString(R.string.remove_url);
 
         // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
@@ -197,6 +201,16 @@ public class LocationActivity extends AppCompatActivity implements
             mRequestingLocationUpdates = true;
             setButtonsEnabledState();
             startLocationUpdates();
+            JSONObject user = new JSONObject();
+            try {
+                user.put("id",1);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            new RESTClient(new RESTClient.AsyncResponse() {
+                @Override
+                public void processFinish(JSONObject json) {}
+            }).execute(RequestMethod.POST,postLinkUrl,user);
         }
     }
 
@@ -209,6 +223,16 @@ public class LocationActivity extends AppCompatActivity implements
             mRequestingLocationUpdates = false;
             setButtonsEnabledState();
             stopLocationUpdates();
+            JSONObject user = new JSONObject();
+            try {
+                user.put("id",1);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            new RESTClient(new RESTClient.AsyncResponse() {
+                @Override
+                public void processFinish(JSONObject json) {}
+            }).execute(RequestMethod.POST, postRemoveUrl, user);
         }
     }
 
@@ -353,21 +377,18 @@ public class LocationActivity extends AppCompatActivity implements
 
         JSONObject userLocation = new JSONObject();
         try {
-            userLocation.put("userId", 1);
-            JSONObject userCoordinate = new JSONObject();
-            userCoordinate.put("lat", location.getLatitude());
-            userCoordinate.put("lng", location.getLongitude());
-            userLocation.put("coordinate", userCoordinate);
+            userLocation.put("lat", location.getLatitude());
+            userLocation.put("lng", location.getLongitude());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         new RESTClient(new RESTClient.AsyncResponse() {
             @Override
-            public void processFinish(JSONObject location) {
+            public void processFinish(JSONObject json) {
 
             }
-        }).execute(RequestMethod.POST, getUserUrl, userLocation);
+        }).execute(RequestMethod.PUT, putUserUrl, userLocation);
 
         updateUI();
         Toast.makeText(this, getResources().getString(R.string.location_updated_message), Toast.LENGTH_SHORT).show();

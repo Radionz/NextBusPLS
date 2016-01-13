@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="@string/textViewUrl"
         android:id="@+id/textView_url"
-        android:layout_above="@+id/button_send"
+        android:layout_above="@+id/button_getBusLocation"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="0dp"
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/buttonSendToServer"
-        android:id="@+id/button_send"
+        android:id="@+id/button_getBusLocation"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -59,15 +59,15 @@
         android:layout_height="wrap_content"
         android:text="@string/buttonGetBusStop"
         android:id="@+id/button_getBusStop"
-        android:layout_above="@+id/button_send"
-        android:layout_alignRight="@+id/button_send"
-        android:layout_alignEnd="@+id/button_send" />
+        android:layout_above="@+id/button_getBusLocation"
+        android:layout_alignRight="@+id/button_getBusLocation"
+        android:layout_alignEnd="@+id/button_getBusLocation" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/buttonGetUsers"
-        android:id="@+id/button_getUsers"
+        android:id="@+id/button_getUser"
         android:layout_above="@+id/button_startTracking"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

@@ -31,9 +31,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button buttonGetBusLocation;
     private Button buttonStartTracking;
     private Button buttonGetBusStops;
-    private Button buttonGetUsers;
+    private Button buttonGetUser;
     private TextView textViewUrl;
     private Marker bus;
+    private Marker user;
     private ArrayList stopList;
 
 
@@ -50,9 +51,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getBusStopsUrl = getResources().getString(R.string.busStops_url);
         getUserUrl = getResources().getString(R.string.user_url);
 
-        buttonGetBusLocation = (Button) findViewById(R.id.button_send);
+        buttonGetBusLocation = (Button) findViewById(R.id.button_getBusLocation);
         buttonGetBusStops = (Button) findViewById(R.id.button_getBusStop);
-        buttonGetUsers = (Button) findViewById(R.id.button_getUsers);
+        buttonGetUser = (Button) findViewById(R.id.button_getUser);
 
         buttonStartTracking = (Button) findViewById(R.id.button_startTracking);
 
@@ -65,10 +66,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 buttonGetBusLocation.setEnabled(false);
                 new RESTClient(new RESTClient.AsyncResponse() {
                     @Override
-                    public void processFinish(JSONObject location) {
+                    public void processFinish(JSONObject json) {
                         try {
-                            location = (JSONObject) location.get("geolocation");
-                            MarkerAnimation.animateMarker(bus, new LatLng((Double) location.get("latitude"), (Double) location.get("longitude")), new LatLngInterpolator.Spherical());
+                            json = (JSONObject) json.get("geolocation");
+                            MarkerAnimation.animateMarker(bus, new LatLng((Double) json.get("latitude"), (Double) json.get("longitude")), new LatLngInterpolator.Spherical());
                             buttonGetBusLocation.setEnabled(true);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -83,13 +84,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, LocationActivity.class);
                 startActivity(intent);
-
-                new RESTClient(new RESTClient.AsyncResponse() {
-                    @Override
-                    public void processFinish(JSONObject location) {
-
-                    }
-                }).execute(RequestMethod.GET, getBusUrl);
             }
         });
 
@@ -100,36 +94,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new RESTClient(new RESTClient.AsyncResponse() {
                     @Override
                     public void processFinish(JSONObject json) {
-                        JSONArray stops = null;
+                        //buttonGetBusStops.setEnabled(true);
+                        JSONArray stops;
                         try {
                             stops = (JSONArray) json.get("stops");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        if (stops != null) {
-                            for (int i = 0; i < stops.length(); i++) {
-                                try {
-                                    stopList.add(stops.get(i));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                            if (stops != null) {
+                                for (int i = 0; i < stops.length(); i++) {
+                                    try {
+                                        JSONObject stop = (JSONObject) stops.get(i);
+                                        LatLng location = new LatLng(Double.parseDouble((String) stop.get("stop_lat")), Double.parseDouble((String) stop.get("stop_lon")));
+                                        mMap.addMarker(new MarkerOptions().position(location)
+                                                .title((String) stop.get("stop_name"))
+                                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.busstop_logo))
+                                                .alpha(0.7f)
+                                                .anchor(0.5f, 0.5f));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 }).execute(RequestMethod.GET, getBusStopsUrl);
             }
         });
 
-        buttonGetUsers.setOnClickListener(new View.OnClickListener() {
+        buttonGetUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonGetUsers.setEnabled(false);
+                buttonGetUser.setEnabled(false);
                 new RESTClient(new RESTClient.AsyncResponse() {
                     @Override
-                    public void processFinish(JSONObject location) {
-                        buttonGetUsers.setEnabled(true);
+                    public void processFinish(JSONObject json) {
+                        buttonGetUser.setEnabled(true);
+
+                        LatLng location = null;
+                        try {
+                            JSONArray usersInBus = (JSONArray) json.get("usersInBus");
+                            for (int i = 0; i < usersInBus.length(); i++) {
+                                JSONObject locationJson = (JSONObject) ((JSONObject) usersInBus.get(i)).get("geolocation");
+                                location = new LatLng((Double) locationJson.get("latitude"), (Double) locationJson.get("longitude"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (location != null) {
+                            user.setVisible(true);
+                            MarkerAnimation.animateMarker(user, location, new LatLngInterpolator.Spherical());
+                        } else {
+                            user.setVisible(false);
+                        }
+
+
                     }
-                }).execute(RequestMethod.GET, getUserUrl);
+                }).execute(RequestMethod.GET, getBusUrl);
             }
         });
     }
@@ -145,6 +166,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.logo_bus))
                 .alpha(0.7f)
                 .anchor(0.5f, 0.5f));
+        user = mMap.addMarker(new MarkerOptions().position(polytech)
+                .title("Le user magique :)")
+                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.user_logo))
+                .alpha(0.7f)
+                .anchor(0.5f, 0.5f)
+                .visible(false));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polytech, 14.0f));
     }
 }
