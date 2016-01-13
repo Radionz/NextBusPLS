@@ -1,8 +1,8 @@
 package nextbuspns_d.polytech.unice.fr.nextbuspls;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,8 +16,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -31,6 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button buttonGetUsers;
     private TextView textViewUrl;
     private Marker bus;
+    private ArrayList stopList;
 
 
     @Override
@@ -95,9 +99,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 buttonGetBusStops.setEnabled(false);
                 new RESTClient(new RESTClient.AsyncResponse() {
                     @Override
-                    public void processFinish(JSONObject location) {
-
-                        buttonGetBusStops.setEnabled(true);
+                    public void processFinish(JSONObject json) {
+                        JSONArray stops = null;
+                        try {
+                            stops = (JSONArray) json.get("stops");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (stops != null) {
+                            for (int i = 0; i < stops.length(); i++) {
+                                try {
+                                    stopList.add(stops.get(i));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     }
                 }).execute(RequestMethod.GET, getBusStopsUrl);
             }

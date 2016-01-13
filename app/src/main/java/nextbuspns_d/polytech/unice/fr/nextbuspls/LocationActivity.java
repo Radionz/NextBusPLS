@@ -3,7 +3,6 @@ package nextbuspns_d.polytech.unice.fr.nextbuspls;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -30,19 +29,16 @@ import java.util.Date;
 public class LocationActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
-    protected static final String TAG = "LocationActivity";
-
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
-
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
      * than this value.
      */
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-
+    protected static final String TAG = "LocationActivity";
     // Keys for storing activity state in the Bundle.
     protected final static String REQUESTING_LOCATION_UPDATES_KEY = "requesting-location-updates-key";
     protected final static String LOCATION_KEY = "location-key";
@@ -76,19 +72,16 @@ public class LocationActivity extends AppCompatActivity implements
     protected String mLatitudeLabel;
     protected String mLongitudeLabel;
     protected String mLastUpdateTimeLabel;
-
-    private String getUserUrl;
-
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
      */
     protected Boolean mRequestingLocationUpdates;
-
     /**
      * Time when the location was updated represented as a String.
      */
     protected String mLastUpdateTime;
+    private String getUserUrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

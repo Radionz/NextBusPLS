@@ -8,6 +8,10 @@ public enum RequestMethod {
 
     private String requestMethod;
 
+    private RequestMethod(String requestMethod) {
+        this.requestMethod = requestMethod;
+    }
+
     public String getRequestMethod() {
         return requestMethod;
     }
@@ -15,11 +19,6 @@ public enum RequestMethod {
     public void setRequestMethod(String requestMethod) {
         this.requestMethod = requestMethod;
     }
-
-    private RequestMethod(String requestMethod){
-        this.requestMethod = requestMethod;
-    }
-
 
     @Override
     public String toString() {

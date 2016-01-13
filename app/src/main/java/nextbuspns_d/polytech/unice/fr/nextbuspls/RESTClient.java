@@ -23,16 +23,29 @@ import java.net.URL;
 public class RESTClient extends AsyncTask<String, Void, JSONObject> {
 
     private static final String LOGGER_TAG = "RESTClient";
-
-    public interface AsyncResponse {
-        void processFinish(JSONObject location);
-    }
-
     public AsyncResponse delegate = null;
     private JSONObject location;
-
     public RESTClient(AsyncResponse delegate) {
         this.delegate = delegate;
+    }
+
+    private static String convertStreamToString(InputStream inputStream) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = null;
+
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line + "\n");
+            }
+        } catch (IOException e) {
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+            }
+        }
+        return stringBuilder.toString();
     }
 
     public String requestUrl(String requestMethod, String url, String json) {
@@ -98,25 +111,6 @@ public class RESTClient extends AsyncTask<String, Void, JSONObject> {
         return null;
     }
 
-    private static String convertStreamToString(InputStream inputStream) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line = null;
-
-        try {
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line + "\n");
-            }
-        } catch (IOException e) {
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     protected void execute(RequestMethod requestMethod, String url, JSONObject jsonObject) {
         this.execute(requestMethod.toString(), url, jsonObject.toString());
     }
@@ -146,5 +140,9 @@ public class RESTClient extends AsyncTask<String, Void, JSONObject> {
     protected void onPostExecute(JSONObject jsonObject) {
         super.onPostExecute(jsonObject);
         delegate.processFinish(jsonObject);
+    }
+
+    public interface AsyncResponse {
+        void processFinish(JSONObject json);
     }
 }
