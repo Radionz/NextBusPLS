@@ -69,7 +69,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void processFinish(JSONObject json) {
                         try {
                             json = (JSONObject) json.get("geolocation");
-                            MarkerAnimation.animateMarker(bus, new LatLng((Double) json.get("latitude"), (Double) json.get("longitude")), new LatLngInterpolator.Spherical());
+                            if (!bus.isVisible()) {
+                                bus.setVisible(true);
+                                bus.setPosition(new LatLng((Double) json.get("latitude"), (Double) json.get("longitude")));
+                            } else {
+                                MarkerAnimation.animateMarker(bus, new LatLng((Double) json.get("latitude"), (Double) json.get("longitude")), new LatLngInterpolator.Spherical());
+                            }
                             buttonGetBusLocation.setEnabled(true);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -165,7 +170,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .title("Le bus magique :)")
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.logo_bus))
                 .alpha(0.7f)
-                .anchor(0.5f, 0.5f));
+                .anchor(0.5f, 0.5f)
+                .visible(false));
         user = mMap.addMarker(new MarkerOptions().position(polytech)
                 .title("Le user magique :)")
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.user_logo))
