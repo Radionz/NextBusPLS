@@ -21,6 +21,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -74,6 +77,8 @@ public class LocationActivity extends AppCompatActivity implements
     protected String mLongitudeLabel;
     protected String mLastUpdateTimeLabel;
 
+    private String getUserUrl;
+
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -104,6 +109,8 @@ public class LocationActivity extends AppCompatActivity implements
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
+
+        getUserUrl = getResources().getString(R.string.user_url);
 
         // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
@@ -164,11 +171,11 @@ public class LocationActivity extends AppCompatActivity implements
      * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
      * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
      * the AndroidManifest.xml.
-     * <p/>
+     * <p>
      * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
      * interval (5 seconds), the Fused Location Provider API returns location updates that are
      * accurate to within a few feet.
-     * <p/>
+     * <p>
      * These settings are appropriate for mapping applications that show real-time location
      * updates.
      */
@@ -225,11 +232,6 @@ public class LocationActivity extends AppCompatActivity implements
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_COARSE_LOCATION);
             return;
         } else {
-            if (true){
-
-            }
-
-
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
     }
@@ -355,6 +357,25 @@ public class LocationActivity extends AppCompatActivity implements
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+
+        JSONObject userLocation = new JSONObject();
+        try {
+            userLocation.put("userId", 1);
+            JSONObject userCoordinate = new JSONObject();
+            userCoordinate.put("lat", location.getLatitude());
+            userCoordinate.put("lng", location.getLongitude());
+            userLocation.put("coordinate", userCoordinate);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        new RESTClient(new RESTClient.AsyncResponse() {
+            @Override
+            public void processFinish(JSONObject location) {
+
+            }
+        }).execute(RequestMethod.PUT, getUserUrl, userLocation);
+
         updateUI();
         Toast.makeText(this, getResources().getString(R.string.location_updated_message), Toast.LENGTH_SHORT).show();
     }

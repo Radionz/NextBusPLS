@@ -71,7 +71,8 @@ public class RESTClient extends AsyncTask<String, Void, JSONObject> {
             int statusCode = urlConnection.getResponseCode();
             if (statusCode != HttpURLConnection.HTTP_OK) {
                 // throw some exception
-                Log.d(LOGGER_TAG, "statusCode: " + statusCode);
+                Log.e(LOGGER_TAG, "statusCode: " + statusCode);
+                return null;
             } else {
                 // read output (only for GET)
 

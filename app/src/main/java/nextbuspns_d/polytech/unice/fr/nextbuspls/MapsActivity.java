@@ -23,7 +23,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String getBusUrl;
     private String getBusStopsUrl;
-    private String getUsersUrl;
+    private String getUserUrl;
     private GoogleMap mMap;
     private Button buttonGetBusLocation;
     private Button buttonStartTracking;
@@ -44,7 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         getBusUrl = getResources().getString(R.string.bus_url);
         getBusStopsUrl = getResources().getString(R.string.busStops_url);
-        getUsersUrl = getResources().getString(R.string.user_url);
+        getUserUrl = getResources().getString(R.string.user_url);
 
         buttonGetBusLocation = (Button) findViewById(R.id.button_send);
         buttonGetBusStops = (Button) findViewById(R.id.button_getBusStop);
@@ -105,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void processFinish(JSONObject location) {
                         buttonGetUsers.setEnabled(true);
                     }
-                }).execute(RequestMethod.GET,getUsersUrl);
+                }).execute(RequestMethod.GET, getUserUrl);
             }
         });
     }
