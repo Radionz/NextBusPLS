@@ -12,4 +12,6 @@
     <string name="start_updates">Enter the bus</string>
     <string name="stop_updates">Leave the bus</string>
     <string name="location_updated_message">Location updated</string>
+    <string name="buttonGetBusStop">Get bus stops</string>
+    <string name="buttonGetUsers">Get users</string>
 </resources>

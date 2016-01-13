@@ -21,10 +21,14 @@ import org.json.JSONObject;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private String getUrl;
+    private String getBusUrl;
+    private String getBusStopsUrl;
+    private String getUsersUrl;
     private GoogleMap mMap;
     private Button buttonGetBusLocation;
     private Button buttonStartTracking;
+    private Button buttonGetBusStops;
+    private Button buttonGetUsers;
     private TextView textViewUrl;
     private Marker bus;
 
@@ -38,15 +42,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        getUrl = getResources().getString(R.string.bus_url);
+        getBusUrl = getResources().getString(R.string.bus_url);
+        getBusStopsUrl = getResources().getString(R.string.busStops_url);
+        getUsersUrl = getResources().getString(R.string.user_url);
 
         buttonGetBusLocation = (Button) findViewById(R.id.button_send);
-        buttonGetBusLocation.setEnabled(false);
+        buttonGetBusStops = (Button) findViewById(R.id.button_getBusStop);
+        buttonGetUsers = (Button) findViewById(R.id.button_getUsers);
 
         buttonStartTracking = (Button) findViewById(R.id.button_startTracking);
 
         textViewUrl = (TextView) findViewById(R.id.textView_url2);
-        textViewUrl.setText(getUrl);
+        textViewUrl.setText(getBusUrl);
 
         buttonGetBusLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             e.printStackTrace();
                         }
                     }
-                }).execute(RequestMethod.GET, getUrl + "1");
+                }).execute(RequestMethod.GET, getBusUrl + "1");
             }
         });
 
@@ -74,17 +81,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+
+        buttonGetBusStops.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonGetBusStops.setEnabled(false);
+                new RESTClient(new RESTClient.AsyncResponse() {
+                    @Override
+                    public void processFinish(JSONObject location) {
+
+                        buttonGetBusStops.setEnabled(true);
+                    }
+                }).execute(RequestMethod.GET,getBusStopsUrl);
+            }
+        });
+
+        buttonGetUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonGetUsers.setEnabled(false);
+                new RESTClient(new RESTClient.AsyncResponse() {
+                    @Override
+                    public void processFinish(JSONObject location) {
+                        buttonGetUsers.setEnabled(true);
+                    }
+                }).execute(RequestMethod.GET,getUsersUrl);
+            }
+        });
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         buttonGetBusLocation.setEnabled(true);
         LatLng polytech = new LatLng(43.5977442, 7.098906);
         bus = mMap.addMarker(new MarkerOptions().position(polytech)
                 .title("Le bus magique :)")
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.logo_bus))
-                .alpha(0.7f));
+                .alpha(0.7f)
+                .anchor(0.5f, 0.5f));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(polytech, 14.0f));
     }
 }
